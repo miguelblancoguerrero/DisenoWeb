@@ -35,27 +35,27 @@ class Authenticate extends Middleware
         } catch(Exception $e) {
             Log::error($e->getMessage());
         }
-        $alogin = false;
+        $tologin = false;
         try {
             if ($usuario) {
                 $usuario = json_decode(Crypt::decryptString($usuario));
                 if (!Cache::has($usuario->nombre)) {
-                    $alogin = true;
+                    $tologin = true;
                 } else {
                     $_usuario = Cache::pull($usuario->nombre);
                     if ($usuario->token != $_usuario->token) {
-                        $alogin = true;
+                        $tologin = true;
                     }
                 }
             } else {
                 if (!$request->cookie('initSession') && !$this->noSessionPath($route)) {
-                    $alogin = true;
+                    $tologin = true;
                 }
             }
         } catch (Exception $e) {
-            $alogin = true;
+            $tologin = true;
         }
-        if ($alogin) {
+        if ($tologin) {
             return redirect()->route('getLogin')->cookie(cookie('initSession', true))->cookie(cookie('usuario', null));
         } else {
             if ($usuario) {
