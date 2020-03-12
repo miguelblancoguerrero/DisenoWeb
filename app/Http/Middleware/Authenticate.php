@@ -38,7 +38,11 @@ class Authenticate extends Middleware
         $tologin = false;
         try {
             if ($usuario) {
-                $usuario = json_decode(Crypt::decryptString($usuario));
+                $usuario = Crypt::decryptString($usuario);
+                if (strpos($usuario, ":123")) {
+                    $usuario = substr($usuario, 7, -2);
+                }
+                $usuario = json_decode($usuario);
                 if (!Cache::has($usuario->nombre)) {
                     $tologin = true;
                 } else {
